@@ -1,0 +1,894 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedcubing Website</title>
+    <style>
+ body {
+    font-family: Arial, sans-serif;
+    transition: background-color 0.5s, color 0.5s;
+    margin: 0;
+    padding: 0;
+    color: red; /* All text in red */
+}
+
+/* Dark and Light Mode */
+.dark-mode {
+    background-color: #121212;
+    color: red;
+}
+
+.light-mode {
+    background-color: #ffffff;
+    color: red;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    padding: 20px;
+}
+
+.header h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.timer {
+    font-size: 3rem;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.button {
+    padding: 15px 25px;
+    background-color: #ff9800;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.button:hover {
+    background-color: #ff5722;
+    transform: scale(1.05);
+}
+
+.mode-toggle {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Sticky Navigation Bar */
+.nav-menu {
+    position: sticky;
+    top: 0;
+    z-index: 999; /* Lower than mode toggle button */
+    background-color: #333;
+    overflow: hidden;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation Links */
+.nav-menu a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Animation for Navigation Links */
+.nav-menu a:hover {
+    background-color: #ff9800;
+    color: black;
+    transform: scale(1.1);
+}
+
+/* Mode Toggle Button - Bigger Circle */
+.mode-toggle-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px; /* Bigger size */
+    height: 60px; /* Bigger size */
+    background-color: #ff9800;
+    border: none;
+    border-radius: 5px; /* Makes it a circle */
+    cursor: pointer;
+    z-index: 1000; /* Ensures it stays above the navbar */
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem; /* Smaller text so it fits */
+    font-weight: bold;
+    color: black; /* Default for light mode */
+}
+
+/* Change text color based on mode */
+.dark-mode .mode-toggle-button {
+    color: black; /* White text in dark mode */
+}
+
+.light-mode .mode-toggle-button {
+    color: white; /* Black text in light mode */
+}
+
+/* Hover Effect */
+.mode-toggle-button:hover {
+    background-color: #ff5722;
+    transform: scale(1.05);
+}
+
+.average-time {
+    font-size: 1.5rem;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Recorded Times List */
+.recorded-times {
+    margin-top: 20px;
+    font-size: 1.2rem;
+}
+
+.recorded-times ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column-reverse; /* Ensures the newest time appears at the top */
+}
+
+.recorded-times li {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Delete Button - Tight Next to Times */
+.delete-btn {
+    background-color: #ff5722;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.delete-btn:hover {
+    background-color: #e64a19;
+    transform: scale(1.05);
+}
+
+.solving-section {
+    padding: 20px;
+    background-color: #f1f1f2;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.step {
+    margin-bottom: 30px;
+}
+
+.step h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.algorithm {
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    margin: 10px 0;
+    display: inline-block;
+}
+
+.step-image {
+    max-width: 200px;
+    display: block;
+    margin: 10px auto;
+    border-radius: 5px;
+}
+
+/* Tabbed Content */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    border-radius: 5px 5px 0 0;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: #ff9800;
+    color: white;
+}
+
+.tabcontent {
+    display: none;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    animation: fadeEffect 1s;
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* Stats Panel */
+.stats-panel {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f1f1f2;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-width: 150px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.stat-label {
+    font-size: 1rem;
+}
+
+
+
+    </style>
+</head>
+<body class="light-mode">
+    <div class="container">
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <a href="#timer">Timer</a>
+            <a href="#solving">How to Solve</a>
+            <a href="#notations">Notations</a>
+            <a href="#top-cubers">Top Cubers</a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo">
+                <img src="https://th.bing.com/th/id/OIP.5mKDH8kefOp50eKFFJZauAHaHa?w=168&h=180&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Speedcubing Logo">
+            </div>
+            <h1>Speedcubing Timer</h1>
+        </div>
+
+        <!-- Timer Section -->
+        <div id="timerDisplay" class="timer">00:00:00.000</div>
+        <div class="mode-toggle">
+            <button class="button" id="startButton" onclick="toggleTimer()">Start Timer</button>
+            <button class="button" onclick="resetTimer()">Reset Timer</button>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="stats-panel">
+            <div class="stat-item">
+                <div class="stat-value" id="totalSolves">0</div>
+                <div class="stat-label">Total Solves</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="averageTime">00:00.000</div>
+                <div class="stat-label">Average Time</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bestTime">--:--</div>
+                <div class="stat-label">Best Time</div>
+            </div>
+        </div>
+
+        <!-- Recorded Times Section -->
+        <div class="recorded-times">
+            <h2>Recorded Times</h2>
+            <ul id="timesList">
+                <!-- List of recorded times will appear here -->
+            </ul>
+            <button class="button" onclick="deleteAllTimes()">Delete All Times</button>
+        </div>
+
+        <!-- How to Solve Section -->
+        <div id="solving" class="solving-section">
+            <h2>How to Solve a Rubik's Cube</h2>
+            
+            <div class="tab">
+                <button class="tablinks" onclick="openMethod(event, 'Beginners')" id="defaultOpen">Beginner's Method</button>
+                <button class="tablinks" onclick="openMethod(event, 'CFOP')">CFOP Method</button>
+                <button class="tablinks" onclick="openMethod(event, 'Roux')">Roux Method</button>
+            </div>
+
+            <div id="Beginners" class="tabcontent">
+                <div class="step">
+                    <h3>Step 1: Solve the White Cross</h3>
+                    <p>Begin by solving the white cross on the bottom face. This is intuitive and doesn't require algorithms.</p>
+                    <p>Tips:</p>
+                    <ul>
+                        <li>Start with the white center piece facing down</li>
+                        <li>Find edge pieces with white and match them with their respective center colors</li>
+                        <li>Align each edge with its center color, then put it in place</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h3>Step 2: Solve the First Layer Corners</h3>
+                    <p>Find corners with white, position them under their correct spot, then use this algorithm:</p>
+                    <div class="algorithm">R' D' R D (repeat until corner is solved)</div>
+                </div>
+
+                <div class="step">
+                    <h3>Step 3: Solve the Second Layer</h3>
+                    <p>For edges that need to go right:</p>
+                    <div class="algorithm">U R U' R' U' F' U F</div>
+                    <p>For edges that need to go left:</p>
+                    <div class="algorithm">U' L' U L U F U' F'</div>
+                </div>
+
+                <div class="step">
+                    <h3>Step 4: Yellow Cross</h3>
+                    <p>Algorithm to get yellow cross:</p>
+                    <div class="algorithm">F R U R' U' F'</div>
+                    <p>Repeat if necessary to get a full yellow cross.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 5: Position Yellow Edges</h3>
+                    <p>Algorithm to cycle three edges (hold with correctly placed edge at the back):</p>
+                    <div class="algorithm">R U R' U R U2 R' U</div>
+                </div>
+
+                <div class="step">
+                    <h3>Step 6: Position Yellow Corners</h3>
+                    <p>Algorithm to cycle three corners (hold with correctly placed corner at front-right):</p>
+                    <div class="algorithm">U R U' L' U R' U' L</div>
+                </div>
+
+                <div class="step">
+                    <h3>Step 7: Orient Yellow Corners</h3>
+                    <p>Algorithm to twist corners (apply multiple times for each corner):</p>
+                    <div class="algorithm">R' D' R D (repeat until corner is oriented)</div>
+                    <p>Repeat for each corner that needs orienting.</p>
+                </div>
+            </div>
+
+            <div id="CFOP" class="tabcontent">
+                <div class="step">
+                    <h3>Step 1: Cross</h3>
+                    <p>Create a cross on the bottom face (usually white). This is done intuitively.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 2: F2L (First 2 Layers)</h3>
+                    <p>Solve the first two layers by pairing corners with their corresponding edges.</p>
+                    <p>Basic F2L Case (corner and edge in top layer):</p>
+                    <div class="algorithm">R U R'</div>
+                    <p>Basic F2L Case (corner in top, edge in slot but flipped):</p>
+                    <div class="algorithm">R U' R' U' F' U F</div>
+                    <p>There are 41 standard F2L cases in total.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 3: OLL (Orienting Last Layer)</h3>
+                    <p>Orient the last layer to make the entire top face yellow.</p>
+                    <p>2-Look OLL first step (yellow cross):</p>
+                    <div class="algorithm">F R U R' U' F'</div>
+                    <p>2-Look OLL second step (for sune pattern):</p>
+                    <div class="algorithm">R U R' U R U2 R'</div>
+                    <p>Full OLL consists of 57 algorithms for all possible cases.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 4: PLL (Permuting Last Layer)</h3>
+                    <p>Permute the last layer to complete the cube.</p>
+                    <p>T Permutation:</p>
+                    <div class="algorithm">R U R' U' R' F R2 U' R' U' R U R' F'</div>
+                    <p>Y Permutation:</p>
+                    <div class="algorithm">F R U' R' U' R U R' F' R U R' U' R' F R F'</div>
+                    <p>Full PLL consists of 21 algorithms for all possible cases.</p>
+                </div>
+            </div>
+
+            <div id="Roux" class="tabcontent">
+                <div class="step">
+                    <h3>Step 1: First Block</h3>
+                    <p>Build a 1x2x3 block on the left side. This is done intuitively.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 2: Second Block</h3>
+                    <p>Build a 1x2x3 block on the right side, completing the first two layers except for the M slice.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 3: CMLL (Corners of Last Layer)</h3>
+                    <p>Orient and permute the top corners while preserving the M slice edges.</p>
+                    <p>Sune CMLL:</p>
+                    <div class="algorithm">R U R' U R U2 R'</div>
+                    <p>There are 42 CMLL algorithms in total.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 4: LSE (Last Six Edges)</h3>
+                    <p>Orient the edges:</p>
+                    <div class="algorithm">M' U M' U M' U2 M U M U M U2</div>
+                    <p>Permute the edges (UL/UR):</p>
+                    <div class="algorithm">M2 U M2 U2 M2 U M2</div>
+                    <p>Permute the M-slice edges:</p>
+                    <div class="algorithm">M2 U2 M2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notations Section -->
+        <div id="notations" class="notations">
+            <h2>Rubik's Cube Notations</h2>
+            <p>Here are the basic notations used in speedcubing:</p>
+            <ul>
+                <li><strong>U</strong> = Up face clockwise</li>
+                <li><strong>U'</strong> = Up face counterclockwise</li>
+                <li><strong>U2</strong> = Up face twice</li>
+                <li><strong>D</strong> = Down face clockwise</li>
+                <li><strong>D'</strong> = Down face counterclockwise</li>
+                <li><strong>D2</strong> = Down face twice</li>
+                <li><strong>R</strong> = Right face clockwise</li>
+                <li><strong>R'</strong> = Right face counterclockwise</li>
+                <li><strong>R2</strong> = Right face twice</li>
+                <li><strong>L</strong> = Left face clockwise</li>
+                <li><strong>L'</strong> = Left face counterclockwise</li>
+                <li><strong>L2</strong> = Left face twice</li>
+                <li><strong>F</strong> = Front face clockwise</li>
+                <li><strong>F'</strong> = Front face counterclockwise</li>
+                <li><strong>F2</strong> = Front face twice</li>
+                <li><strong>B</strong> = Back face clockwise</li>
+                <li><strong>B'</strong> = Back face counterclockwise</li>
+                <li><strong>B2</strong> = Back face twice</li>
+                <li><strong>M</strong> = Middle slice (between L and R), direction same as L</li>
+                <li><strong>E</strong> = Equatorial slice (between U and D), direction same as D</li>
+                <li><strong>S</strong> = Standing slice (between F and B), direction same as F</li>
+            </ul>
+        </div>
+
+        <!-- Top Ten Speedcubers Section -->
+        <div id="top-cubers" class="top-cubers">
+    <h2>Top Fastest Speedcubers</h2>
+    <div class="cubers-list">
+        <div class="cuber">
+            <img src="https://th.bing.com/th/id/OIP.AWB1cHjrgpN7oZ5OMiOmXwHaEK?w=257&h=180&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Yiheng Wang" />
+            <h3>Yiheng Wang</h3>
+            <p><strong>Time:</strong> 4.32s</p>
+            <p><strong>Country:</strong> China</p>
+            <p>Yiheng Wang holds the fastest average time in 3x3x3 speedcubing, showcasing exceptional skill and consistency.</p>
+        </div>
+        <div class="cuber">
+            <img src="https://th.bing.com/th?id=OVP.NyXsjJ4DKmgYrEyAD6uKCAHgFo&w=271&h=152&c=7&rs=1&qlt=90&o=5&dpr=1.7&pid=2.1" alt="Feliks Zemdegs" />
+            <h3>Feliks Zemdegs</h3>
+            <p><strong>Time:</strong> 5.53s</p>
+            <p><strong>Country:</strong> Australia</p>
+            <p>Feliks Zemdegs is renowned for his speedcubing prowess and has set multiple world records throughout his career.</p>
+        </div>
+        <div class="cuber">
+            <img src="https://th.bing.com/th/id/OIP.LnecBLPSgwTZ6XDb13WJNAHaHa?w=151&h=180&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Max Park" />
+            <h3>Max Park</h3>
+            <p><strong>Time:</strong> 5.32s</p>
+            <p><strong>Country:</strong> USA</p>
+            <p>Max Park is known for his incredible solving speed and holds multiple world records across different cube categories.</p>
+        </div>
+        <div class="cuber">
+            <img src="https://th.bing.com/th/id/OIP.j1LDFKdwJDkkPyoIbK-JRgHaEK?w=331&h=186&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Tymon Kolasiński" />
+            <h3>Tymon Kolasiński</h3>
+            <p><strong>Time:</strong> 5.09s</p>
+            <p><strong>Country:</strong> Poland</p>
+            <p>Tymon Kolasiński has broken multiple European records and is known for his impressive one-handed solving abilities.</p>
+        </div>
+        <div class="cuber">
+            <img src="https://th.bing.com/th/id/OIP.lMaCmWc4NtTLZAncaEUBLAHaFj?w=243&h=182&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Ruihang Xu" />
+            <h3>Ruihang Xu</h3>
+            <p><strong>Time:</strong> 5.48s</p>
+            <p><strong>Country:</strong> China</p>
+            <p>Ruihang Xu is among the elite speedcubers with exceptional averages in official competitions.</p>
+        </div>
+        <div class="cuber">
+            <img src="https://th.bing.com/th/id/OIP.GcOTkclgmHZDUgzd1y4jtwAAAA?w=178&h=180&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Leo Borromeo" />
+            <h3>Leo Borromeo</h3>
+            <p><strong>Time:</strong> 5.58s</p>
+            <p><strong>Country:</strong> Philippines</p>
+            <p>Leo Borromeo has dominated competitions in Asia and continues to impress with his solving techniques.</p>
+        </div>
+    </div>
+</div>
+
+    <!-- Dark Mode Toggle Button -->
+    <button class="mode-toggle-button" id="modeToggleButton">Toggle Dark Mode</button>
+
+    <script>
+        let timerInterval;
+let startTime;
+let isTimerRunning = false;
+let timesRecorded = JSON.parse(localStorage.getItem("timesRecorded")) || [];
+let totalSolves = parseInt(localStorage.getItem("totalSolves")) || 0;
+let bestTime = localStorage.getItem("bestTime") ? parseFloat(localStorage.getItem("bestTime")) : Infinity;
+
+const timerDisplay = document.getElementById("timerDisplay");
+const startButton = document.getElementById("startButton");
+const averageTimeDisplay = document.getElementById("averageTime");
+const timesList = document.getElementById("timesList");
+const totalSolvesDisplay = document.getElementById("totalSolves");
+const bestTimeDisplay = document.getElementById("bestTime");
+
+function startTimer() {
+    if (isTimerRunning) return;
+
+    isTimerRunning = true;
+    startTime = Date.now();
+    timerInterval = setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        timerDisplay.textContent = formatTimeWithMilliseconds(elapsedTime);
+    }, 10); // Update every 10ms for smoother display
+    
+    startButton.textContent = "Stop Timer";
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+    startButton.textContent = "Start Timer";
+    
+    const endTime = Date.now();
+    const totalTime = (endTime - startTime) / 1000; // Convert to seconds with milliseconds
+    
+    timesRecorded.push(totalTime);
+    totalSolves++;
+    
+    // Check if this is a new best time
+    const isNewBest = totalTime < bestTime;
+    if (isNewBest) {
+        bestTime = totalTime;
+        localStorage.setItem("bestTime", bestTime);
+        celebrateNewBest();
+    }
+    
+    localStorage.setItem("timesRecorded", JSON.stringify(timesRecorded));
+    localStorage.setItem("totalSolves", totalSolves);
+    
+    updateStats();
+    updateRecordedTimes();
+}
+
+function resetTimer() {
+    clearInterval(timerInterval);
+    timerDisplay.textContent = "00:00:00.000";
+    isTimerRunning = false;
+    startButton.textContent = "Start Timer";
+}
+
+function toggleTimer() {
+    if (isTimerRunning) {
+        stopTimer();
+    } else {
+        startTimer();
+    }
+}
+
+function updateStats() {
+    // Update total solves
+    totalSolvesDisplay.textContent = totalSolves;
+    
+    if (timesRecorded.length > 0) {
+        // Update average time
+        const averageTimeInSeconds = timesRecorded.reduce((total, current) => total + current, 0) / timesRecorded.length;
+        averageTimeDisplay.textContent = formatTimeShort(averageTimeInSeconds * 1000);
+        
+        // Update best time
+        const bestTimeInSeconds = Math.min(...timesRecorded);
+        bestTimeDisplay.textContent = formatTimeShort(bestTimeInSeconds * 1000);
+    } else {
+        averageTimeDisplay.textContent = "00:00.000";
+        bestTimeDisplay.textContent = "--:--";
+        bestTime = Infinity; // Reset best time if all times are deleted
+    }
+}
+
+function updateRecordedTimes() {
+    timesList.innerHTML = '';
+    timesRecorded.forEach((time, index) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = formatTimeWithMilliseconds(time * 1000);
+        
+        // Highlight the best time
+        if (time === bestTime) {
+            listItem.classList.add("best-time");
+        }
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.classList.add("delete-btn");
+        deleteButton.onclick = () => deleteTime(index);
+
+        listItem.appendChild(deleteButton);
+        timesList.appendChild(listItem);
+    });
+}
+
+function formatTimeWithMilliseconds(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const ms = String(Math.floor(milliseconds % 1000)).padStart(3, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+    const minutes = String(Math.floor(totalSeconds / 60) % 60).padStart(2, '0');
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}.${ms}`;
+}
+
+function formatTimeShort(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const ms = String(Math.floor(milliseconds % 1000)).padStart(3, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+    const minutes = String(Math.floor(totalSeconds / 60) % 60).padStart(2, '0');
+    return `${minutes}:${seconds}.${ms}`;
+}
+
+function deleteTime(index) {
+    // Check if we're deleting the best time
+    const isDeletingBest = timesRecorded[index] === bestTime;
+    
+    timesRecorded.splice(index, 1);
+    totalSolves = Math.max(0, totalSolves - 1);
+    
+    // If we deleted the best time, recalculate the best time
+    if (isDeletingBest && timesRecorded.length > 0) {
+        bestTime = Math.min(...timesRecorded);
+    } else if (timesRecorded.length === 0) {
+        bestTime = Infinity;
+    }
+    
+    localStorage.setItem("timesRecorded", JSON.stringify(timesRecorded));
+    localStorage.setItem("totalSolves", totalSolves);
+    localStorage.setItem("bestTime", timesRecorded.length > 0 ? bestTime : "");
+    
+    updateStats();
+    updateRecordedTimes();
+}
+
+function deleteAllTimes() {
+    timesRecorded = [];
+    totalSolves = 0;
+    bestTime = Infinity;
+    
+    localStorage.removeItem("timesRecorded");
+    localStorage.setItem("totalSolves", 0);
+    localStorage.removeItem("bestTime");
+    
+    updateStats();
+    updateRecordedTimes();
+}
+
+function openMethod(evt, methodName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(methodName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+// Confetti function to celebrate new best times
+function celebrateNewBest() {
+    const duration = 3000; // 3 seconds
+    const particleCount = 150;
+    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4'];
+    
+    // Create confetti container if it doesn't exist
+    let confettiContainer = document.getElementById('confetti-container');
+    if (!confettiContainer) {
+        confettiContainer = document.createElement('div');
+        confettiContainer.id = 'confetti-container';
+        confettiContainer.style.position = 'fixed';
+        confettiContainer.style.top = '0';
+        confettiContainer.style.left = '0';
+        confettiContainer.style.width = '100%';
+        confettiContainer.style.height = '100%';
+        confettiContainer.style.pointerEvents = 'none';
+        confettiContainer.style.zIndex = '9999';
+        document.body.appendChild(confettiContainer);
+    }
+    
+    // Create confetti particles
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = `${Math.random() * 10 + 5}px`;
+        particle.style.height = `${Math.random() * 10 + 5}px`;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.borderRadius = '50%';
+        
+        // Add some variety with different shapes
+        if (Math.random() > 0.7) {
+            particle.style.borderRadius = '0';
+            particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+        }
+        
+        // Set starting position
+        const startX = Math.random() * window.innerWidth;
+        particle.style.left = `${startX}px`;
+        particle.style.top = '-10px';
+        
+        // Add some physics-like animation with CSS
+        particle.style.animation = `
+            confetti-fall ${Math.random() * 2 + 1.5}s linear forwards,
+            confetti-sway ${Math.random() * 3 + 2}s ease-in-out infinite alternate
+        `;
+        
+        confettiContainer.appendChild(particle);
+        
+        // Remove particle after animation completes
+        setTimeout(() => {
+            if (particle.parentNode === confettiContainer) {
+                confettiContainer.removeChild(particle);
+            }
+        }, duration);
+    }
+    
+    // Create celebration message
+    const message = document.createElement('div');
+    message.textContent = 'NEW BEST TIME!';
+    message.style.position = 'fixed';
+    message.style.top = '30%';
+    message.style.left = '50%';
+    message.style.transform = 'translate(-50%, -50%)';
+    message.style.fontSize = '3rem';
+    message.style.fontWeight = 'bold';
+    message.style.color = '#ffeb3b';
+    message.style.textShadow = '0 0 10px rgba(0,0,0,0.7)';
+    message.style.zIndex = '10000';
+    message.style.opacity = '0';
+    message.style.animation = 'message-fade 3s ease-in-out forwards';
+    
+    document.body.appendChild(message);
+    
+    // Remove message after animation
+    setTimeout(() => {
+        if (message.parentNode === document.body) {
+            document.body.removeChild(message);
+        }
+    }, duration);
+    
+    // Play celebration sound
+    const audio = new Audio();
+    audio.src = 'https://cdnjs.cloudflare.com/ajax/libs/joshwnj-soundbank/1.0.0/win.wav';
+    audio.volume = 0.5;
+    audio.play().catch(err => console.log('Audio playback prevented: ', err));
+}
+
+// Add needed CSS for animations
+function addConfettiStyles() {
+    const styleSheet = document.createElement('style');
+    styleSheet.innerHTML = `
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes confetti-sway {
+            0% {
+                transform: translateX(-5px);
+            }
+            100% {
+                transform: translateX(5px);
+            }
+        }
+        
+        @keyframes message-fade {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+        
+        .best-time {
+            color: gold;
+            font-weight: bold;
+        }
+    `;
+    document.head.appendChild(styleSheet);
+}
+
+window.onload = function () {
+    updateStats();
+    updateRecordedTimes();
+    // Open the default tab
+    document.getElementById("defaultOpen").click();
+    // Add confetti styles
+    addConfettiStyles();
+};
+
+const modeToggleButton = document.getElementById("modeToggleButton");
+
+modeToggleButton.addEventListener("click", function () {
+    const body = document.body;
+    body.classList.toggle("dark-mode");
+    body.classList.toggle("light-mode");
+});
+
+// Add keyboard support for the timer
+document.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+        event.preventDefault();
+        toggleTimer();
+    }
+});
+    </script>
+</body>
+</html>
